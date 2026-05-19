@@ -4,51 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Personal Portfolio Website">
-    <title>My Portfolio</title>
+    <title>Responsive Portfolio</title>
 
     <style>
 
-        body{
+        :root{
+            --primary:#2563eb;
+            --dark:#111827;
+            --light:#f3f4f6;
+            --white:#ffffff;
+        }
+
+        *{
             margin:0;
-            font-family: Arial, sans-serif;
-            background:#f4f4f4;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:Arial, sans-serif;
+            background:var(--light);
             color:#222;
         }
 
         header{
-            background:#1e293b;
-            color:white;
+            background:var(--dark);
+            color:var(--white);
             text-align:center;
-            padding:30px;
+            padding:40px 20px;
+        }
+
+        header h1{
+            font-size:40px;
         }
 
         nav{
-            background:#334155;
+            display:flex;
+            justify-content:center;
+            gap:20px;
+            background:#1f2937;
             padding:15px;
-            text-align:center;
+            flex-wrap:wrap;
         }
 
         nav a{
             color:white;
             text-decoration:none;
-            margin:15px;
             font-weight:bold;
         }
 
-        main{
-            padding:20px;
+        .container{
+            width:90%;
+            margin:auto;
+            padding:30px 0;
+
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:20px;
         }
 
-        section{
+        .card{
             background:white;
-            margin-bottom:20px;
-            padding:20px;
-            border-radius:10px;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
         }
 
         h2{
-            color:#2563eb;
+            color:var(--primary);
+            margin-bottom:15px;
         }
 
         ul{
@@ -61,7 +90,7 @@
         }
 
         input, textarea{
-            padding:10px;
+            padding:12px;
             margin-bottom:15px;
             border:1px solid #ccc;
             border-radius:5px;
@@ -69,7 +98,7 @@
 
         button{
             padding:12px;
-            background:#2563eb;
+            background:var(--primary);
             color:white;
             border:none;
             border-radius:5px;
@@ -81,17 +110,26 @@
         }
 
         footer{
-            background:#1e293b;
+            background:var(--dark);
             color:white;
             text-align:center;
             padding:15px;
+            margin-top:20px;
         }
 
         @media screen and (max-width:768px){
 
-            nav a{
-                display:block;
-                margin:10px 0;
+            .container{
+                grid-template-columns:1fr;
+            }
+
+            header h1{
+                font-size:30px;
+            }
+
+            nav{
+                flex-direction:column;
+                align-items:center;
             }
 
         }
@@ -108,67 +146,51 @@
     </header>
 
     <nav>
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
+        <a href="#">About</a>
+        <a href="#">Skills</a>
+        <a href="#">Projects</a>
+        <a href="#">Contact</a>
     </nav>
 
-    <main>
+    <main class="container">
 
-        <section id="about">
+        <section class="card">
             <h2>About Me</h2>
             <p>
-                I am a Computer Science Engineering student passionate about web development
-                and learning modern technologies.
+                I am a Computer Science Engineering student passionate about
+                web development and modern technologies.
             </p>
         </section>
 
-        <section id="skills">
+        <section class="card">
             <h2>Skills</h2>
 
             <ul>
                 <li>HTML5</li>
                 <li>CSS3</li>
+                <li>Responsive Design</li>
                 <li>JavaScript</li>
-                <li>Python</li>
             </ul>
         </section>
 
-        <section id="projects">
+        <section class="card">
             <h2>Projects</h2>
 
-            <article>
-                <h3>Portfolio Website</h3>
-                <p>A responsive personal portfolio website using HTML and CSS.</p>
-            </article>
-
-            <article>
-                <h3>To-Do App</h3>
-                <p>A simple task management app using JavaScript.</p>
-            </article>
+            <p>Portfolio Website</p>
+            <p>To-Do List App</p>
 
         </section>
 
-        <section id="contact">
+        <section class="card">
             <h2>Contact Me</h2>
 
             <form>
 
-                <input 
-                    type="text" 
-                    placeholder="Enter your name"
-                    aria-label="Name">
+                <input type="text" placeholder="Name">
 
-                <input 
-                    type="email" 
-                    placeholder="Enter your email"
-                    aria-label="Email">
+                <input type="email" placeholder="Email">
 
-                <textarea 
-                    rows="5"
-                    placeholder="Enter your message"
-                    aria-label="Message"></textarea>
+                <textarea rows="5" placeholder="Message"></textarea>
 
                 <button type="submit">Send Message</button>
 
@@ -179,7 +201,7 @@
     </main>
 
     <footer>
-        <p>© 2026 R Prasannadharan | Portfolio Website</p>
+        <p>© 2026 R Prasannadharan</p>
     </footer>
 
 </body>
