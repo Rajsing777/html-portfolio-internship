@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Dashboard</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+    text-align:center;
+    padding:40px;
+}
+
+.container{
+    background:white;
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+    border-radius:10px;
+}
+
+input{
+    padding:10px;
+    width:60%;
+}
+
+button{
+    padding:10px;
+}
+
+#weather{
+    margin-top:20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Weather Dashboard</h1>
+
+<input type="text" id="city" placeholder="Enter city name">
+
+<button onclick="getWeather()">
+Search
+</button>
+
+<div id="weather"></div>
+
+</div>
+
+<script>
+
+async function getWeather(){
+
+    const city =
+    document.getElementById("city").value;
+
+    const weatherDiv =
+    document.getElementById("weather");
+
+    try{
+
+        const geoResponse =
+        await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`
+        );
+
+        const geoData =
+        await geoResponse.json();
+
+        if(!geoData.results){
+
+            weatherDiv.innerHTML =
+            "<p>City not found</p>";
+
+            return;
+        }
+
+        const lat =
+        geoData.results[0].latitude;
+
+        const lon =
+        geoData.results[0].longitude;
+
+        const weatherResponse =
+        await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+        );
+
+        const weatherData =
+        await weatherResponse.json();
+
+        weatherDiv.innerHTML = `
+            <h2>${city}</h2>
+            <p>Temperature:
+            ${weatherData.current_weather.temperature} °C</p>
+
+            <p>Wind Speed:
+            ${weatherData.current_weather.windspeed} km/h</p>
+        `;
+
+    }
+
+    catch(error){
+
+        weatherDiv.innerHTML =
+        "<p>Error fetching weather data.</p>";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
