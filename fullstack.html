@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>prasanna.dev | Advanced Systems Architecture</title>
+  
+  <!-- Premium Fonts and Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* --- ADVANCED CSS VARIABLES & THEME --- */
+    :root {
+      --bg-base: #030305;
+      --bg-surface: #0a0a0f;
+      --bg-elevated: #12121a;
+      --primary: #4f46e5;     /* Indigo */
+      --primary-glow: rgba(79, 70, 229, 0.4);
+      --secondary: #0ea5e9;   /* Sky Blue */
+      --accent: #10b981;      /* Emerald */
+      --danger: #f43f5e;      /* Rose */
+      --text-100: #ffffff;
+      --text-200: #e2e8f0;
+      --text-300: #94a3b8;
+      --border-light: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(79, 70, 229, 0.5);
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --transition-fast: 0.2s ease;
+      --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* --- GLOBAL ARCHITECTURE --- */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-200);
+      line-height: 1.7;
+      overflow-x: hidden;
+      /* Subtle animated grid background */
+      background-image: 
+        linear-gradient(var(--border-light) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: center center;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: #2dd4bf; border-radius: 10px; background-image: linear-gradient(to bottom, var(--primary), var(--secondary)); }
+
+    /* --- SCROLL REVEAL ANIMATIONS --- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- LAYOUT COMPONENTS --- */
+    section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+      position: relative;
+    }
+
+    .section-header {
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-100);
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-title span {
+      color: var(--primary);
+      font-family: 'Fira Code', monospace;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(18, 18, 26, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      transition: var(--transition-smooth);
+      transform: skewX(-20deg);
+    }
+
+    .glass-card:hover::before { left: 200%; }
+    .glass-card:hover {
+      border-color: rgba(79, 70, 229, 0.4);
+      box-shadow: 0 10px 30px -10px var(--primary-glow);
+      transform: translateY(-4px);
+    }
+
+    /* --- TOP NAVIGATION --- */
+    header {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(3, 3, 5, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-light);
+      z-index: 1000;
+    }
+
+    nav {
+      max-width: 1280px; margin: 0 auto; padding: 1.25rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--text-100); text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .logo i { color: var(--primary); }
+
+    nav ul { display: flex; list-style: none; gap: 2.5rem; }
+    nav a {
+      text-decoration: none; color: var(--text-300);
+      font-size: 0.9rem; font-weight: 500; font-family: 'Fira Code', monospace;
+      transition: var(--transition-fast);
+    }
+    nav a:hover { color: var(--primary); }
+    nav a span { color: var(--primary); opacity: 0.5; margin-right: 4px; }
+
+    /* --- HERO SECTION --- */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative;
+    }
+
+    /* Ambient background glow */
+    .hero-glow {
+      position: absolute;
+      top: 20%; right: 10%; width: 40vw; height: 40vw;
+      background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+      filter: blur(60px); opacity: 0.5; z-index: -1;
+      animation: pulseGlow 8s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1); opacity: 0.4; }
+      100% { transform: scale(1.2); opacity: 0.6; }
+    }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--accent); padding: 0.4rem 1rem; border-radius: 50px;
+      font-family: 'Fira Code', monospace; font-size: 0.8rem; margin-bottom: 2rem;
+    }
+    .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); animation: blink 2s infinite; }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3.5rem, 6vw, 6rem);
+      font-weight: 700; line-height: 1.05; letter-spacing: -0.03em;
+      color: var(--text-100); margin-bottom: 1.5rem;
+    }
+
+    .text-gradient {
+      background: linear-gradient(to right, #fff, var(--text-300));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .typing-text { color: var(--primary); font-family: 'Fira Code', monospace; }
+    .cursor { display: inline-block; width: 3px; background: var(--primary); margin-left: 4px; animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hero p { font-size: 1.25rem; color: var(--text-300); max-width: 650px; margin-bottom: 3rem; }
+
+    .btn {
+      padding: 0.8rem 1.8rem; border-radius: var(--radius-sm);
+      font-family: 'Fira Code', monospace; font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem;
+      transition: var(--transition-smooth); border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--text-100); color: var(--bg-base);
+    }
+    .btn-primary:hover {
+      background: var(--text-200); box-shadow: 0 0 20px rgba(255,255,255,0.2); transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent; color: var(--text-100); border-color: var(--border-light);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary); background: rgba(79, 70, 229, 0.1); color: var(--primary);
+    }
+
+    /* --- CAPABILITIES MATRIX --- */
+    .matrix-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;
+    }
+
+    .service-card i {
+      font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem; display: block;
+    }
+    .service-card h3 { font-size: 1.4rem; color: var(--text-100); margin-bottom: 0.75rem; font-family: 'Space Grotesk', sans-serif;}
+    
+    .tech-tags { display: flex; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .tag { font-size: 0.75rem; padding: 0.2rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 4px; font-family: 'Fira Code', monospace; color: var(--text-300); }
+
+    /* --- DATA STATE / INVENTORY CONSOLE --- */
+    .console-header {
+      display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+      background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);
+    }
+
+    .input-group { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 250px; }
+    .input-group label { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--primary); }
+    
+    .input-field {
+      background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-light);
+      padding: 0.8rem 1.2rem; border-radius: var(--radius-sm); color: var(--text-100); font-family: inherit; transition: var(--transition-fast);
+    }
+    .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+
+    .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+
+    .data-node {
+      display: flex; flex-direction: column; justify-content: space-between;
+      border-top: 3px solid transparent;
+    }
+    .data-node:hover { border-top-color: var(--primary); }
+
+    .node-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+    .node-status { font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(16,185,129,0.1); color: var(--accent); border: 1px solid rgba(16,185,129,0.2); }
+    
+    .node-price { font-family: 'Fira Code', monospace; font-size: 1.5rem; font-weight: 600; color: var(--text-100); margin: 1rem 0; }
+    
+    .btn-icon {
+      background: transparent; border: none; color: var(--text-300); cursor: pointer;
+      width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      transition: var(--transition-fast);
+    }
+    .btn-icon:hover { background: rgba(244,63,94,0.1); color: var(--danger); }
+
+    /* --- TERMINAL TELEMETRY (ADVANCED) --- */
+    .terminal-container {
+      background: #0d0d12; border: 1px solid #2d2d3a; border-radius: var(--radius-md);
+      overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .terminal-topbar {
+      background: #1a1a24; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem;
+      border-bottom: 1px solid #2d2d3a;
+    }
+    .mac-btn { width: 12px; height: 12px; border-radius: 50%; }
+    .mac-btn.close { background: #ff5f56; } .mac-btn.min { background: #ffbd2e; } .mac-btn.max { background: #27c93f; }
+    .terminal-title { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #8b8b9e; margin-left: 1rem; }
+
+    .terminal-body {
+      padding: 2rem; font-family: 'Fira Code', monospace; font-size: 0.9rem;
+      color: #a9b1d6; min-height: 300px; display: flex; flex-direction: column;
+    }
+
+    .terminal-input-row { display: flex; gap: 1rem; margin-bottom: 2rem; }
+    .terminal-input-row .input-field { background: transparent; border-color: #2d2d3a; flex: 1; }
+    .terminal-input-row .input-field:focus { border-color: var(--secondary); box-shadow: none; }
+
+    .terminal-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
+    .log-line { opacity: 0; animation: fadeIn 0.1s forwards; }
+    .log-system { color: #7aa2f7; }
+    .log-success { color: #9ece6a; }
+    .log-error { color: #f7768e; }
+    .log-data { color: #e0af68; font-size: 1.1rem; margin: 1rem 0; border-left: 2px solid #e0af68; padding-left: 1rem; }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* --- ENCRYPTED CONTACT --- */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    .contact-info h3 { font-size: 2rem; color: var(--text-100); margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;}
+    
+    .comms-form { display: flex; flex-direction: column; gap: 1.5rem; }
+    textarea.input-field { min-height: 150px; resize: vertical; }
+
+    /* --- TOAST SYSTEM --- */
+    #toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; gap: 1rem; }
+    .sys-toast {
+      background: rgba(18, 18, 26, 0.95); border-left: 4px solid var(--primary);
+      color: var(--text-200); padding: 1rem 1.5rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .sys-toast.show { transform: translateX(0); }
+    .sys-toast.danger { border-left-color: var(--danger); }
+    .sys-toast.success { border-left-color: var(--accent); }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border-light); padding: 3rem 2rem; text-align: center; color: var(--text-300); font-family: 'Fira Code', monospace; font-size: 0.85rem; }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="#" class="logo"><i class="fa-solid fa-code-merge"></i> prasanna.dev</a>
+      <ul>
+        <li><a href="#about"><span>01.</span>About</a></li>
+        <li><a href="#architecture"><span>02.</span>Architecture</a></li>
+        <li><a href="#state"><span>03.</span>State Matrix</a></li>
+        <li><a href="#telemetry"><span>04.</span>Telemetry</a></li>
+        <li><a href="#comms"><span>05.</span>Comms</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero" id="hero">
+    <div class="hero-glow"></div>
+    <div class="reveal">
+      <div class="status-badge"><div class="status-dot"></div> System Instance Online</div>
+      <h1 class="text-gradient">Engineering Advanced<br>Digital Ecosystems.</h1>
+      <p>I build high-performance, scalable web architectures. Specialized in modern JavaScript frameworks, complex state management, and robust API integrations.</p>
+      
+      <div style="font-family: 'Fira Code', monospace; font-size: 1.1rem; color: var(--text-200); margin-bottom: 3rem;">
+        > Current Task: <span class="typing-text" id="typewriter"></span><span class="cursor"></span>
+      </div>
+
+      <div class="btn-group" style="display: flex; gap: 1rem;">
+        <a href="#state" class="btn btn-primary">Initialize Console <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="#comms" class="btn btn-outline"><i class="fa-solid fa-terminal"></i> Open Port</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="section-header reveal">
+      <h2 class="section-title"><span>02.</span> Core Architecture</h2>
+      <p style="color: var(--text-300); max-width: 600px; margin-top: 1rem;">High-level overview of system capabilities and technical proficiencies.</p>
+    </div>
+    
+    <div class="matrix-grid">
+      <div class="glass-card service-card reveal" style="transition-delay: 0.1s;">
+        <i class="fa-brands fa-react"></i>
+        <h3>Client-Side Rendering</h3>
+        <p>Building reactive, fluid user interfaces utilizing modern component-based JavaScript libraries and shadow DOM techniques.</p>
+        <div class="tech-tags"><span class="tag">React</span><span class="tag">Vue</span><span class="tag">Tailwind</span></div>
+      </div>
+      <div class="glass-card service-card reveal" style="transition-delay: 0.2s;">
+        <i class="fa-solid fa-server"></i>
+        <h3>State & Logic Engines</h3>
+        <p>Architecting centralized, immutable data stores for complex web applications ensuring predictable state mutations.</p>
+        <div class="tech-tags"><span class="tag">Redux</span><span class="tag">Zustand</span><span class="tag">Node.js</span></div>
+      </div>
+      <div class="glass-card service-card reveal" style="transition-delay: 0.3s;">
+        <i class="fa-solid fa-network-wired"></i>
+        <h3>Distributed APIs</h3>
+        <p>Designing and consuming secure RESTful and GraphQL endpoints, optimizing data payloads and handling asynchronous streams.</p>
+        <div class="tech-tags"><span class="tag">REST</span><span class="tag">GraphQL</span><span class="tag">WebSockets</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="state">
+    <div class="section-header reveal">
+      <h2 class="section-title"><span>03.</span> State Matrix Console</h2>
+      <p style="color: var(--text-300); margin-top: 1rem;">Live manipulation of a local JSON data array. Demonstrating CRUD operations and reactive rendering.</p>
+    </div>
+
+    <div class="reveal">
+      <div class="console-header">
+        <div class="input-group">
+          <label>Filter Array By String</label>
+          <input type="text" id="search-input" class="input-field" placeholder="e.g., Compute..." oninput="renderDataState()">
+        </div>
+        <div class="input-group" style="flex: 0.5;">
+          <label>Sort Metric</label>
+          <select id="sort-select" class="input-field" onchange="renderDataState()" style="appearance: none;">
+            <option value="default">Chronological</option>
+            <option value="price-desc">Value (High - Low)</option>
+            <option value="price-asc">Value (Low - High)</option>
+          </select>
+        </div>
+        <div style="background: rgba(79, 70, 229, 0.1); border: 1px solid var(--border-focus); padding: 0.8rem 1.5rem; border-radius: var(--radius-sm); margin-bottom: 0.2rem;">
+          <span style="font-family: 'Fira Code'; font-size: 0.8rem; color: var(--text-300); display: block;">Total System Value</span>
+          <span id="total-val" style="font-family: 'Fira Code'; font-size: 1.5rem; font-weight: 600; color: var(--primary);">₹0</span>
+        </div>
+      </div>
+
+      <div class="data-grid" id="data-grid"></div>
+
+      <form class="glass-card" onsubmit="handleInjectNode(event)" style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-end;">
+        <div class="input-group">
+          <label>New Node Identifier</label>
+          <input type="text" id="new-name" class="input-field" placeholder="e.g., Edge Cache Server" required>
+        </div>
+        <div class="input-group">
+          <label>Allocated Value (₹)</label>
+          <input type="number" id="new-price" class="input-field" placeholder="e.g., 8500" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="height: 48px;">Inject to State</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="telemetry">
+    <div class="section-header reveal">
+      <h2 class="section-title"><span>04.</span> Global Telemetry Port</h2>
+      <p style="color: var(--text-300); margin-top: 1rem;">Simulated UNIX terminal. Fetches mock environmental data mimicking async network latency.</p>
+    </div>
+
+    <div class="terminal-container reveal">
+      <div class="terminal-topbar">
+        <div class="mac-btn close"></div><div class="mac-btn min"></div><div class="mac-btn max"></div>
+        <span class="terminal-title">prasanna@dev-machine: ~/telemetry-engine</span>
+      </div>
+      
+      <div class="terminal-body">
+        <div class="terminal-input-row">
+          <span style="color: var(--accent);">~ ❯</span>
+          <form onsubmit="handleTerminalCommand(event)" style="display: flex; flex: 1; gap: 1rem;">
+            <input type="text" id="term-input" class="input-field" placeholder="Enter target coordinates/city..." autocomplete="off" required style="padding: 0; color: #a9b1d6;">
+            <button type="submit" class="btn btn-outline" style="padding: 0.4rem 1rem; border-color: #2d2d3a; color: #a9b1d6;">EXEC</button>
+          </form>
+        </div>
+
+        <div class="terminal-output" id="term-output">
+          <div class="log-line">System initialized. Awaiting coordinate input...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="comms">
+    <div class="reveal contact-grid">
+      <div class="contact-info">
+        <h2 class="section-title" style="margin-bottom: 1rem;"><span>05.</span> Secure Comms</h2>
+        <p style="color: var(--text-300); font-size: 1.1rem; margin-bottom: 2rem;">Establish a direct pipeline. Whether it's a structural proposition or an architectural query, my port is open.</p>
+        
+        <div style="font-family: 'Fira Code', monospace; color: var(--primary); display: flex; flex-direction: column; gap: 1rem;">
+          <div>> protocol: <span style="color: var(--text-200);">mailto:</span></div>
+          <div>> node: <span style="color: var(--text-200);">hello@prasanna.dev</span></div>
+          <div>> status: <span style="color: var(--accent);">LISTENING</span></div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <form class="comms-form" onsubmit="handleDispatch(event)">
+          <div class="input-group">
+            <label>Sender ID</label>
+            <input type="text" class="input-field" required>
+          </div>
+          <div class="input-group">
+            <label>Return Node (Email)</label>
+            <input type="email" class="input-field" required>
+          </div>
+          <div class="input-group">
+            <label>Payload (Message)</label>
+            <textarea class="input-field" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%;">Encrypt & Dispatch</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast-container"></div>
+
+  <footer>
+    [ root@prasanna.dev ] • EOF 2026 • Built with Vanilla DOM Matrix.
+  </footer>
+
+  <script>
+    /* --- 1. INTERSECTION OBSERVER (SCROLL REVEAL) --- */
+    const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* --- 2. ADVANCED TYPEWRITER --- */
+    const commands = ['Compiling assets...', 'Optimizing rendering tree...', 'Deploying secure nodes...', 'Resolving promises...'];
+    let cmdIdx = 0, charIdx = 0, deleting = false;
+    const typeTarget = document.getElementById('typewriter');
+
+    function typeTerminal() {
+      const current = commands[cmdIdx];
+      typeTarget.textContent = current.substring(0, charIdx);
+      
+      if (!deleting && charIdx < current.length) {
+        charIdx++;
+        setTimeout(typeTerminal, 50 + Math.random() * 50);
+      } else if (deleting && charIdx > 0) {
+        charIdx--;
+        setTimeout(typeTerminal, 30);
+      } else if (!deleting && charIdx === current.length) {
+        deleting = true;
+        setTimeout(typeTerminal, 2000); // Wait before delete
+      } else {
+        deleting = false;
+        cmdIdx = (cmdIdx + 1) % commands.length;
+        setTimeout(typeTerminal, 500); // Wait before next word
+      }
+    }
+
+    /* --- 3. SYSTEM TOASTS (LOGS) --- */
+    function sysLog(msg, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `sys-toast ${type}`;
+      
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      toast.innerHTML = `<span style="color: #64748b;">[${time}]</span> ${msg}`;
+      
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    }
+
+    /* --- 4. ADVANCED STATE MATRIX (INVENTORY) --- */
+    let appState = [
+      { id: 1, title: "High-Compute Instance", price: 55000, tag: "Hardware", status: "ACTIVE" },
+      { id: 2, title: "Mobile Edge Node", price: 25000, tag: "Device", status: "STANDBY" },
+      { id: 3, title: "Audio Diagnostics Hub", price: 2000, tag: "Peripheral", status: "ACTIVE" },
+      { id: 4, title: "Mechanical Input Deck", price: 1500, tag: "Peripheral", status: "OFFLINE" }
+    ];
+
+    function renderDataState() {
+      const grid = document.getElementById('data-grid');
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const sortMethod = document.getElementById('sort-select').value;
+      
+      grid.innerHTML = '';
+      let total = 0;
+
+      // Filter
+      let processed = appState.filter(item => item.title.toLowerCase().includes(query));
+      
+      // Sort
+      if(sortMethod === 'price-desc') processed.sort((a,b) => b.price - a.price);
+      if(sortMethod === 'price-asc') processed.sort((a,b) => a.price - b.price);
+
+      processed.forEach(node => {
+        total += node.price;
+        const div = document.createElement('div');
+        div.className = 'glass-card data-node';
+        div.innerHTML = `
+          <div>
+            <div class="node-header">
+              <h4 style="color: var(--text-100); font-family: 'Space Grotesk', sans-serif;">${node.title}</h4>
+              <span class="node-status">${node.status}</span>
+            </div>
+            <span style="font-family: 'Fira Code'; font-size: 0.75rem; color: var(--text-300);">[ TAG: ${node.tag} ]</span>
+            <div class="node-price">₹${node.price.toLocaleString('en-IN')}</div>
+          </div>
+          <div style="border-top: 1px solid var(--border-light); padding-top: 1rem; display: flex; justify-content: flex-end;">
+            <button class="btn-icon" onclick="destroyNode(${node.id})"><i class="fa-solid fa-power-off"></i></button>
+          </div>
+        `;
+        grid.appendChild(div);
+      });
+
+      document.getElementById('total-val').textContent = `₹${total.toLocaleString('en-IN')}`;
+    }
+
+    function handleInjectNode(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-name').value;
+      const price = parseInt(document.getElementById('new-price').value);
+
+      appState.push({
+        id: Date.now(), title: name, price: price, tag: "Custom", status: "ACTIVE"
+      });
+      
+      e.target.reset();
+      renderDataState();
+      sysLog(`Node '${name}' successfully injected into state array.`, 'success');
+    }
+
+    function destroyNode(id) {
+      appState = appState.filter(n => n.id !== id);
+      renderDataState();
+      sysLog(`Node gracefully terminated. Memory freed.`, 'danger');
+    }
+
+    /* --- 5. TERMINAL SIMULATOR --- */
+    const termOutput = document.getElementById('term-output');
+
+    function addLogLine(text, type = '') {
+      const line = document.createElement('div');
+      line.className = `log-line ${type}`;
+      line.innerHTML = text;
+      termOutput.appendChild(line);
+      termOutput.scrollTop = termOutput.scrollHeight; // Auto-scroll
+    }
+
+    function handleTerminalCommand(e) {
+      e.preventDefault();
+      const input = document.getElementById('term-input');
+      const target = input.value.trim().toUpperCase();
+      input.value = '';
+      input.disabled = true; // Lock terminal
+
+      termOutput.innerHTML = ''; // Clear previous
+      addLogLine(`> Fetching environmental telemetry for node: [${target}]`, 'log-system');
+
+      // Simulate async network steps
+      setTimeout(() => addLogLine(`> Resolving DNS for telemetry server... [OK]`, 'log-system'), 400);
+      setTimeout(() => addLogLine(`> Establishing secure handshake... [OK]`, 'log-system'), 800);
+      setTimeout(() => addLogLine(`> Parsing JSON payload stream...`, 'log-system'), 1300);
+      
+      setTimeout(() => {
+        // Generate pseudo-random mock data based on input string
+        const temp = 18 + (target.length * 7) % 15;
+        const hum = 40 + (target.length * 3) % 40;
+        
+        addLogLine(`
+          TARGET: ${target}<br>
+          STATUS: ONLINE<br>
+          TEMP_C: ${temp}°C<br>
+          HUMIDITY: ${hum}%<br>
+          UPLINK: STABLE
+        `, 'log-data');
+        
+        addLogLine(`> Process finished with exit code 0`, 'log-success');
+        input.disabled = false;
+        input.focus();
+        sysLog(`Telemetry fetch successful for ${target}`, 'success');
+      }, 2000);
+    }
+
+    /* --- 6. COMMS --- */
+    function handleDispatch(e) {
+      e.preventDefault();
+      e.target.reset();
+      sysLog(`Packet encrypted and transmitted to host network.`, 'success');
+    }
+
+    /* --- INIT --- */
+    window.onload = () => {
+      typeTerminal();
+      renderDataState();
+    };
+  </script>
+</body>
+</html>
